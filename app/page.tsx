@@ -1,11 +1,11 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { motion } from "framer-motion";
 import Link from "next/link";
 import Services from "./components/Services";
 import { siteConfig } from "./config/siteConfig";
 import { apiFetch } from "@/lib/api";
+import { motion, Easing } from "framer-motion"; // Add Easing here
 
 type DeviceType = "android" | "ios" | "other";
 
@@ -29,23 +29,33 @@ type BlogPost = {
   published_at: string;
 };
 
+// Define your custom bezier curve using the Easing type
+const customEase: Easing = [0.16, 1, 0.3, 1]; // Renamed to avoid confusion with the string "easeOut"
+// ...
 const container = {
-  hidden: { opacity: 0, y: 16 },
-  show: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.5, ease: "easeOut", staggerChildren: 0.08 },
-  },
+  hidden: { opacity: 0, y: 16 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.6,
+      ease: customEase, // <-- Use the typed customEase array
+      staggerChildren: 0.12,
+    },
+  },
 };
 
+// Define the standard "easeOut" bezier curve
+const standardEaseOut: Easing = [0, 0, 0.2, 1];
+
 const item = {
-  hidden: { opacity: 0, y: 12, filter: "blur(3px)" },
-  show: {
-    opacity: 1,
-    y: 0,
-    filter: "blur(0px)",
-    transition: { duration: 0.45, ease: "easeOut" },
-  },
+  hidden: { opacity: 0, y: 12, filter: "blur(3px)" },
+  show: {
+    opacity: 1,
+    y: 0,
+    filter: "blur(0px)",
+    transition: { duration: 0.45, ease: standardEaseOut }, // <-- Use the typed array
+  },
 };
 
 function detectDeviceType(): DeviceType {
