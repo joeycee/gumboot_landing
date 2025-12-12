@@ -1,0 +1,39 @@
+.card {
+  perspective: 1000px;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: 16px;   /* clip everything */
+  overflow: hidden;      /* important */
+  isolation: isolate;    /* helps some browsers clip 3D children */
+}
+
+.inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transition: transform .7s ease;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+.card:hover .inner,
+.card:focus-within .inner { transform: rotateY(180deg); }
+
+.face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.face img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;    /* 👈 fits inside, no crop */
+  background: transparent !important;       /* avoids transparent corners showing the page bg */
+  border-radius: inherit;
+}
+
+.front { transform: rotateY(0deg); }
+.back  { transform: rotateY(180deg); }
