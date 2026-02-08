@@ -53,6 +53,11 @@ export default function Footer() {
                 Terms
               </Link>
             </li>
+            <li>
+              <Link className="hover:underline" href="/guide-lines">
+                Guidelines
+              </Link>
+            </li>
           </ul>
         </div>
 

@@ -203,8 +203,8 @@ export default function PrivacyPage() {
               <ul className="mt-2 space-y-1 text-sm">
                 <li>
                   <span className="font-medium">Email:</span>{" "}
-                  <a className="underline" href="mailto:support@gumboot.app">
-                    support@gumboot.app
+                  <a className="underline" href="mailto:hello@gumboot.app">
+                    hello@gumboot.app
                   </a>
                 </li>
                 <li>
