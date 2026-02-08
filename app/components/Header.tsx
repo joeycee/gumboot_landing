@@ -7,11 +7,11 @@ import { useState, useMemo } from "react";
 type NavItem = { label: string; href: string; type?: "anchor" | "route" };
 
 const NAV_ITEMS: NavItem[] = [
-  { label: "Features", href: "#features", type: "anchor" },
-  { label: "FAQ", href: "/faq", type: "anchor" },
-  { label: "Contact", href: "/contact", type: "anchor" },
-  { label: "Beta", href: "/beta", type: "route" },
-  { label: "Blogs", href: "/blog", type: "route" },
+  { label: "Features", href: "https://gumboot.app#features", type: "anchor" },
+  { label: "FAQ", href: "https://gumboot.app/faq", type: "anchor" },
+  { label: "Contact", href: "https://gumboot.app/contact", type: "anchor" },
+  { label: "Beta", href: "https://gumboot.app/beta", type: "route" },
+  { label: "Blogs", href: "https://gumboot.app/blog", type: "route" },
 ];
 
 export default function Header() {
