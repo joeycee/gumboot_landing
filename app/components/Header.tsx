@@ -7,6 +7,7 @@ import { useState, useMemo } from "react";
 type NavItem = { label: string; href: string; type?: "anchor" | "route" };
 
 const NAV_ITEMS: NavItem[] = [
+  { label: "About", href: "/about", type: "route" },
   { label: "Features", href: "#features", type: "anchor" },
   { label: "FAQ", href: "/faq", type: "route" },
   { label: "Contact", href: "/contact", type: "route" },
