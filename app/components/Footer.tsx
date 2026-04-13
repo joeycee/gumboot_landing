@@ -2,6 +2,7 @@
 "use client";
 
 import Link from "next/link";
+import { siteConfig } from "../config/siteConfig";
 
 export default function Footer() {
   return (
@@ -62,17 +63,37 @@ export default function Footer() {
         </div>
 
         <div>
-          <h4 className="font-semibold">Get the app</h4>
+          <h4 className="font-semibold">Use Gumboot</h4>
           <ul className="mt-3 space-y-2">
             <li>
-              <a className="hover:underline" href="/beta">
-                Download beta
+              <a className="hover:underline" href={siteConfig.appUrl}>
+                Open Gumboot
+              </a>
+            </li>
+            <li>
+              <a className="hover:underline" href={siteConfig.postJobUrl}>
+                Post a job
+              </a>
+            </li>
+            <li>
+              <a className="hover:underline" href={siteConfig.signupUrl}>
+                Sign up
               </a>
             </li>
             <li>
               <Link className="hover:underline" href="/beta">
-                Beta &amp; release notes
+                Download app
               </Link>
+            </li>
+            <li>
+              <Link className="hover:underline" href="/beta">
+                iPhone and Android builds
+              </Link>
+            </li>
+            <li>
+              <a className="hover:underline" href={siteConfig.appUrl}>
+                Sign in
+              </a>
             </li>
           </ul>
         </div>

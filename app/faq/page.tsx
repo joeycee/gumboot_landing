@@ -25,7 +25,7 @@ const ALL_QA: QA[] = [
   {
     cat: "general",
     q: "How does payment work?",
-    a: "Once a job is completed, payout is initiated to the provider’s bank account via our payment partner. Processing can take up to 4 business days.",
+    a: "All payments are handled through Gumboot with Stripe. Once a job is completed, payout is initiated to the provider’s bank account and processing can take up to 4 business days.",
   },
   {
     cat: "general",
@@ -37,7 +37,12 @@ const ALL_QA: QA[] = [
   {
     cat: "post",
     q: "How do I post a job?",
-    a: "Log in, tap the map at (or near) your job location, then enter details, photos, and your budget/timeframe.",
+    a: "Log in, make sure you have a valid card saved on your account, tap the map at (or near) your job location, then enter details, photos, and your budget/timeframe.",
+  },
+  {
+    cat: "post",
+    q: "Do I need a card to post a job?",
+    a: "Yes. A valid card is required to post a job on Gumboot.",
   },
   {
     cat: "post",
@@ -59,7 +64,7 @@ const ALL_QA: QA[] = [
   {
     cat: "do",
     q: "How are providers verified?",
-    a: "We verify identity details and rely on ongoing ratings/reviews to maintain trust and safety in the community.",
+    a: "ID verification is required, and we rely on ongoing ratings and reviews to maintain trust and safety in the community.",
   },
   {
     cat: "do",

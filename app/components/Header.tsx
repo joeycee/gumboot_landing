@@ -3,15 +3,17 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, useMemo } from "react";
+import { siteConfig } from "../config/siteConfig";
 
 type NavItem = { label: string; href: string; type?: "anchor" | "route" };
 
 const NAV_ITEMS: NavItem[] = [
   { label: "About", href: "/about", type: "route" },
+  { label: "How it works", href: "#how-it-works", type: "anchor" },
   { label: "Features", href: "#features", type: "anchor" },
+  { label: "Beta", href: "/beta", type: "route" },
   { label: "FAQ", href: "/faq", type: "route" },
   { label: "Contact", href: "/contact", type: "route" },
-  { label: "Beta", href: "/beta", type: "route" },
   { label: "Blogs", href: "/blog", type: "route" },
 ];
 
@@ -62,15 +64,18 @@ export default function Header() {
 
         {/* Right side CTA */}
         <div className="hidden sm:flex items-center gap-3">
-          <Link href="/contact" className="text-sm hover:underline">
-            Support
-          </Link>
-          <Link
+          <a
             href="/beta"
+            className="text-sm text-slate-700 hover:text-slate-900 transition-colors"
+          >
+            Download app
+          </a>
+          <a
+            href={siteConfig.appUrl}
             className="rounded-xl px-4 py-2 text-sm font-medium bg-slate-900 text-white hover:bg-slate-800"
           >
-            Get the app
-          </Link>
+            Open Gumboot
+          </a>
         </div>
 
         {/* Mobile menu button */}
@@ -111,16 +116,19 @@ export default function Header() {
               );
             })}
             <div className="pt-2 border-t border-slate-200 mt-2 flex items-center gap-3">
-              <Link href="/support" className="text-sm hover:underline">
-                Support
-              </Link>
-              <Link
+              <a
                 href="/beta"
+                className="text-sm text-slate-700 hover:text-slate-900 transition-colors"
+              >
+                Download app
+              </a>
+              <a
+                href={siteConfig.appUrl}
                 className="rounded-xl px-3 py-1.5 text-sm font-medium bg-slate-900 text-white hover:bg-slate-800"
                 onClick={() => setOpen(false)}
               >
-                Get the app
-              </Link>
+                Open Gumboot
+              </a>
             </div>
           </div>
         </div>

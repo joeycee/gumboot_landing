@@ -1,24 +1,13 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import Link from "next/link";
+import { motion, type Easing } from "framer-motion";
+import { FaApple, FaAndroid } from "react-icons/fa";
 import Services from "./components/Services";
 import { siteConfig } from "./config/siteConfig";
 import { apiFetch } from "@/lib/api";
-import { motion, Easing } from "framer-motion"; // Add Easing here
-
-type DeviceType = "android" | "ios" | "other";
-
-type AppRelease = {
-  id: number;
-  name: string;
-  version: string;
-  android_build: string | null;
-  ios_testflight_url: string | null;
-  is_active: boolean;
-  notes: string | null;
-  created_at: string;
-};
+import type { AppRelease } from "@/types/api";
 
 type BlogPost = {
   id: number;
@@ -29,166 +18,304 @@ type BlogPost = {
   published_at: string;
 };
 
-// Define your custom bezier curve using the Easing type
-const customEase: Easing = [0.16, 1, 0.3, 1]; // Renamed to avoid confusion with the string "easeOut"
-// ...
-const container = {
-  hidden: { opacity: 0, y: 16 },
-  show: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.6,
-      ease: customEase, // <-- Use the typed customEase array
-      staggerChildren: 0.12,
-    },
-  },
-};
+const heroStats = [
+  { value: "2-sided", label: "Built for posters and taskers" },
+  { value: "1 flow", label: "Post, chat, hire, and pay" },
+  { value: "NZ-first", label: "Designed for local jobs" },
+];
 
-// Define the standard "easeOut" bezier curve
+const trustPoints = [
+  "ID verification is required, and verified profiles with reviews help users choose with confidence.",
+  "A valid card is required to post a job, and all payments are handled through Gumboot with Stripe.",
+  "In-app messaging keeps job details, updates, and payment flow in one place instead of scattered chats.",
+];
+
+const howItWorks = [
+  {
+    step: "01",
+    title: "Post the job",
+    body: "Tell people what you need, where it is, and how much you want to spend.",
+  },
+  {
+    step: "02",
+    title: "Compare local offers",
+    body: "Nearby taskers can respond with pricing, timing, and profile details.",
+  },
+  {
+    step: "03",
+    title: "Hire with confidence",
+    body: "Pick the right person, message directly, and line everything up quickly.",
+  },
+  {
+    step: "04",
+    title: "Pay securely",
+    body: "Handle payment through Gumboot with Stripe once the work is done and you are happy.",
+  },
+];
+
+const audienceCards = [
+  {
+    eyebrow: "For people who need help",
+    title: "Post a job and get local help moving.",
+    body: "From lawns and cleaning to moving, painting, and deliveries, Gumboot gives you a faster way to hire nearby help. A valid card is required to post.",
+    ctaLabel: "Post a job",
+    ctaHref: siteConfig.postJobUrl,
+    points: ["Post in minutes", "Compare offers", "Pay securely"],
+  },
+  {
+    eyebrow: "For people who want to earn",
+    title: "Turn spare time and practical skills into income.",
+    body: "Create a profile, complete ID verification, browse nearby jobs, send offers, and build trust through great work and reviews.",
+    ctaLabel: "Sign up",
+    ctaHref: siteConfig.signupUrl,
+    points: ["Flexible local work", "Verified profiles", "Simple job flow"],
+  },
+];
+
+const MOBILE_POPUP_STORAGE_KEY = "gumboot-mobile-popup-dismissed";
+
+const customEase: Easing = [0.16, 1, 0.3, 1];
 const standardEaseOut: Easing = [0, 0, 0.2, 1];
 
-const item = {
-  hidden: { opacity: 0, y: 12, filter: "blur(3px)" },
-  show: {
-    opacity: 1,
-    y: 0,
-    filter: "blur(0px)",
-    transition: { duration: 0.45, ease: standardEaseOut }, // <-- Use the typed array
-  },
+const container = {
+  hidden: { opacity: 0, y: 16 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.6,
+      ease: customEase,
+      staggerChildren: 0.12,
+    },
+  },
 };
 
-function detectDeviceType(): DeviceType {
-  if (typeof window === "undefined") return "other";
+const item = {
+  hidden: { opacity: 0, y: 12, filter: "blur(3px)" },
+  show: {
+    opacity: 1,
+    y: 0,
+    filter: "blur(0px)",
+    transition: { duration: 0.45, ease: standardEaseOut },
+  },
+};
 
-  const ua = window.navigator.userAgent || "";
-  const platform = window.navigator.platform || "";
+function CtaButton({
+  href,
+  children,
+  variant = "primary",
+}: {
+  href: string;
+  children: ReactNode;
+  variant?: "primary" | "secondary";
+}) {
+  const className =
+    variant === "primary"
+      ? "inline-flex items-center justify-center rounded-2xl bg-[#26A69A] px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-emerald-900/20 transition hover:-translate-y-0.5 hover:bg-[#1f9388]"
+      : "inline-flex items-center justify-center rounded-2xl border border-white/20 bg-white/10 px-5 py-3 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-white/15";
 
-  if (/Android/i.test(ua)) return "android";
-  if (
-    /iPhone|iPad|iPod/i.test(ua) ||
-    (/MacIntel/.test(platform) &&
-      (window.navigator as any).maxTouchPoints > 1)
-  ) {
-    return "ios";
-  }
-  return "other";
+  return (
+    <a href={href} className={className}>
+      {children}
+    </a>
+  );
+}
+
+function SectionIntro({
+  eyebrow,
+  title,
+  body,
+}: {
+  eyebrow: string;
+  title: string;
+  body: string;
+}) {
+  return (
+    <div className="max-w-3xl">
+      <p className="text-xs font-semibold uppercase tracking-[0.32em] text-slate-500">
+        {eyebrow}
+      </p>
+      <h2 className="mt-3 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
+        {title}
+      </h2>
+      <p className="mt-4 text-base leading-7 text-slate-600 sm:text-lg">
+        {body}
+      </p>
+    </div>
+  );
+}
+
+function DownloadButtons({
+  release,
+  tone = "light",
+}: {
+  release: AppRelease | null;
+  tone?: "light" | "dark";
+}) {
+  const iosHref = release?.ios_testflight_url || "/beta";
+  const androidHref = release?.android_build || "/beta";
+  const isDark = tone === "dark";
+
+  const shared =
+    "inline-flex items-center justify-center gap-2 rounded-2xl px-4 py-3 text-sm font-semibold transition";
+  const secondary = isDark
+    ? "border border-white/15 bg-white/5 text-white hover:bg-white/10"
+    : "border border-slate-300 bg-white text-slate-900 hover:bg-slate-50";
+  const primary = isDark
+    ? "bg-white text-slate-900 hover:bg-slate-100"
+    : "bg-slate-900 text-white hover:bg-slate-800";
+
+  return (
+    <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+      <a href={iosHref} className={`${shared} ${secondary}`}>
+        <FaApple className="text-base" />
+        Download for iPhone
+      </a>
+      <a href={androidHref} className={`${shared} ${primary}`}>
+        <FaAndroid className="text-base" />
+        Download for Android
+      </a>
+    </div>
+  );
 }
 
 function FeatureStrip() {
   return (
-    <section className="py-12 sm:py-16 lg:py-20 border-t border-slate-200 bg-white">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
-          {/* PHONE - Mobile centered, Desktop left */}
-          <div className="order-2 lg:order-1 lg:justify-self-start">
-            <div className="relative overflow-hidden max-w-[280px] sm:max-w-sm mx-auto lg:mx-0">
-              <img
-                src="/phone/phone.png"
-                alt="Gumboot app preview"
-                className="w-full h-auto object-contain"
-                loading="lazy"
-              />
-              <div className="pointer-events-none absolute inset-x-6 bottom-2 h-3 rounded-full blur-md opacity-40 bg-slate-900/30" />
+    <section className="border-t border-slate-200 bg-white py-14 sm:py-16 lg:py-20">
+      <div className="mx-auto grid max-w-7xl gap-10 px-4 sm:px-6 lg:grid-cols-[0.95fr_1.05fr] lg:px-8">
+        <div className="relative overflow-hidden rounded-[2rem] bg-[#2B3439] p-8 text-white shadow-2xl shadow-slate-900/10 sm:p-10">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_rgba(38,166,154,0.26),_transparent_40%)]" />
+          <div className="relative">
+            <p className="text-xs font-semibold uppercase tracking-[0.32em] text-white/55">
+              Why it converts
+            </p>
+            <h3 className="mt-3 text-3xl font-bold tracking-tight sm:text-4xl">
+              Built to reduce the usual local-job friction.
+            </h3>
+            <div className="mt-8 grid gap-4 sm:grid-cols-3">
+              {heroStats.map((stat) => (
+                <div
+                  key={stat.label}
+                  className="rounded-2xl border border-white/10 bg-white/5 p-4"
+                >
+                  <p className="text-xl font-semibold text-white">{stat.value}</p>
+                  <p className="mt-2 text-sm leading-6 text-white/70">{stat.label}</p>
+                </div>
+              ))}
             </div>
           </div>
+        </div>
 
-          {/* TEXT - Mobile first, Desktop right */}
-          <motion.div
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true, amount: 0.25 }}
-            variants={container}
-            className="order-1 lg:order-2 space-y-5 sm:space-y-6 text-slate-700"
-          >
-            <motion.div variants={item}>
-              <h2 className="text-2xl sm:text-3xl lg:text-3xl font-bold text-slate-900">
-                Why Gumboot?
-              </h2>
-              <p className="mt-2 text-base sm:text-lg text-slate-600">
-                A faster, simpler way to get jobs done locally.
-              </p>
-            </motion.div>
-
-            <ul className="space-y-3 sm:space-y-4 text-sm sm:text-base leading-relaxed">
-              <motion.li variants={item} className="flex items-start gap-3">
-                <span className="flex-shrink-0 text-lg sm:text-xl">✅</span>
-                <div>
-                  <span className="block text-slate-900 font-semibold">
-                    Stripe-secured payments
-                  </span>
-                  <p className="text-slate-600 mt-0.5">
-                    Safe and instant transactions.
-                  </p>
+        <div className="flex items-center">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.32em] text-slate-500">
+              Why Gumboot
+            </p>
+            <h3 className="mt-3 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
+              A faster marketplace for everyday local jobs.
+            </h3>
+            <div className="mt-6 space-y-4">
+              {trustPoints.map((point) => (
+                <div
+                  key={point}
+                  className="flex gap-3 rounded-2xl border border-slate-200 bg-slate-50 p-4"
+                >
+                  <span className="mt-1 text-base text-[#26A69A]">●</span>
+                  <p className="text-sm leading-6 text-slate-600 sm:text-base">{point}</p>
                 </div>
-              </motion.li>
-              <motion.li variants={item} className="flex items-start gap-3">
-                <span className="flex-shrink-0 text-lg sm:text-xl">✅</span>
-                <div>
-                  <span className="block text-slate-900 font-semibold">
-                    Verified profiles
-                  </span>
-                  <p className="text-slate-600 mt-0.5">
-                    Every user verified for trust and safety.
-                  </p>
-                </div>
-              </motion.li>
-              <motion.li variants={item} className="flex items-start gap-3">
-                <span className="flex-shrink-0 text-lg sm:text-xl">✅</span>
-                <div>
-                  <span className="block text-slate-900 font-semibold">
-                    Ratings & reviews
-                  </span>
-                  <p className="text-slate-600 mt-0.5">
-                    Choose helpers with great feedback.
-                  </p>
-                </div>
-              </motion.li>
-              <motion.li variants={item} className="flex items-start gap-3">
-                <span className="flex-shrink-0 text-lg sm:text-xl">✅</span>
-                <div>
-                  <span className="block text-slate-900 font-semibold">
-                    NZ-based support
-                  </span>
-                  <p className="text-slate-600 mt-0.5">
-                    Real people ready to help you locally.
-                  </p>
-                </div>
-              </motion.li>
-            </ul>
-          </motion.div>
+              ))}
+            </div>
+            <div className="mt-8 flex flex-wrap gap-3">
+              <a
+                href={siteConfig.appUrl}
+                className="inline-flex items-center justify-center rounded-2xl bg-slate-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-800"
+              >
+                Open Gumboot
+              </a>
+              <Link
+                href="/beta"
+                className="inline-flex items-center justify-center rounded-2xl border border-slate-300 px-5 py-3 text-sm font-semibold text-slate-900 transition hover:bg-slate-50"
+              >
+                Download the app
+              </Link>
+            </div>
+          </div>
         </div>
       </div>
     </section>
   );
 }
 
-export default function Page() {
-  const [deviceType, setDeviceType] = useState<DeviceType>("other");
-  const [release, setRelease] = useState<AppRelease | null>(null);
-  const [loadingRelease, setLoadingRelease] = useState(true);
+function MobileAppPopup({
+  open,
+  release,
+  onClose,
+}: {
+  open: boolean;
+  release: AppRelease | null;
+  onClose: () => void;
+}) {
+  if (!open) return null;
 
+  return (
+    <div className="fixed inset-0 z-[70] flex items-end justify-center bg-slate-950/45 p-4 sm:items-center">
+      <div className="w-full max-w-xl rounded-[2rem] border border-white/10 bg-[#253035] p-6 text-white shadow-2xl sm:p-7">
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.32em] text-white/50">
+              Mobile app
+            </p>
+            <h2 className="mt-3 text-2xl font-bold tracking-tight sm:text-3xl">
+              Take Gumboot on the road with the app.
+            </h2>
+            <p className="mt-3 text-sm leading-7 text-white/72 sm:text-base">
+              Open Gumboot on the web, or download the latest iPhone and Android builds for jobs on the go.
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={onClose}
+            className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-white/80 transition hover:bg-white/10"
+            aria-label="Close mobile app popup"
+          >
+            ×
+          </button>
+        </div>
+        <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+          <a
+            href={siteConfig.appUrl}
+            className="inline-flex items-center justify-center rounded-2xl bg-[#26A69A] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#1f9388]"
+          >
+            Open Gumboot on the web
+          </a>
+          <a
+            href={siteConfig.signupUrl}
+            className="inline-flex items-center justify-center rounded-2xl border border-white/15 px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/10"
+          >
+            Sign up
+          </a>
+        </div>
+        <div className="mt-4">
+          <DownloadButtons release={release} tone="dark" />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default function Page() {
   const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
   const [loadingPosts, setLoadingPosts] = useState(true);
-
-  const [waitlistEmail, setWaitlistEmail] = useState("");
-  const [waitlistLoading, setWaitlistLoading] = useState(false);
-  const [waitlistMessage, setWaitlistMessage] = useState<string | null>(null);
-  const [waitlistError, setWaitlistError] = useState<string | null>(null);
+  const [release, setRelease] = useState<AppRelease | null>(null);
+  const [showMobilePopup, setShowMobilePopup] = useState(false);
 
   useEffect(() => {
-    setDeviceType(detectDeviceType());
-
-    const fetchRelease = async () => {
-      try {
-        const data = await apiFetch<AppRelease>("/api/app/latest/");
-        setRelease(data);
-      } catch (err) {
-        console.error("Failed to fetch latest app release", err);
-      } finally {
-        setLoadingRelease(false);
-      }
-    };
+    const dismissed =
+      typeof window !== "undefined" &&
+      window.localStorage.getItem(MOBILE_POPUP_STORAGE_KEY) === "1";
+    if (!dismissed) {
+      setShowMobilePopup(true);
+    }
 
     const fetchPosts = async () => {
       try {
@@ -201,338 +328,322 @@ export default function Page() {
       }
     };
 
-    fetchRelease();
+    const fetchRelease = async () => {
+      try {
+        const data = await apiFetch<AppRelease>("/api/app/latest/");
+        setRelease(data);
+      } catch (err) {
+        console.error("Failed to fetch latest app release", err);
+      }
+    };
+
     fetchPosts();
+    fetchRelease();
   }, []);
 
-  const handleWaitlistSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setWaitlistMessage(null);
-    setWaitlistError(null);
-
-    if (!waitlistEmail) return;
-
-    try {
-      setWaitlistLoading(true);
-      await apiFetch("/api/waitlist/", {
-        method: "POST",
-        body: JSON.stringify({
-          email: waitlistEmail,
-          source: "home_waitlist",
-        }),
-      });
-      setWaitlistMessage("You're on the list! 🎉");
-      setWaitlistEmail("");
-    } catch (err) {
-      console.error("Waitlist signup failed", err);
-      setWaitlistError("Something went wrong. Please try again.");
-    } finally {
-      setWaitlistLoading(false);
+  const closeMobilePopup = () => {
+    setShowMobilePopup(false);
+    if (typeof window !== "undefined") {
+      window.localStorage.setItem(MOBILE_POPUP_STORAGE_KEY, "1");
     }
-  };
-
-  const renderDownloadButtons = () => {
-    // smaller buttons on mobile: smaller padding + text-xs base
-    const baseBtnClasses =
-      "rounded-xl px-4 py-2.5 sm:px-6 sm:py-3.5 text-xs sm:text-sm font-medium shadow-lg transition-all text-center";
-
-    if (loadingRelease) {
-      return (
-        <button
-          className={`${baseBtnClasses} bg-white/90 text-slate-900 ring-1 ring-slate-200`}
-          type="button"
-        >
-          Checking latest version…
-        </button>
-      );
-    }
-
-    if (!release) {
-      return (
-        <Link
-          href="/beta"
-          className={`${baseBtnClasses} bg-white text-slate-900 ring-1 ring-slate-200 hover:bg-slate-50`}
-        >
-          Join the Gumboot beta
-        </Link>
-      );
-    }
-
-    const hasAndroid = !!release.android_build;
-    const hasIos = !!release.ios_testflight_url;
-
-    // Android device
-    if (deviceType === "android" && hasAndroid) {
-      return (
-        <>
-          <a
-            className={`${baseBtnClasses} bg-white text-slate-900 ring-1 ring-slate-200 hover:bg-slate-50`}
-            href={release.android_build!}
-          >
-            Download Android beta
-          </a>
-          {hasIos && (
-            <Link
-              href="/beta"
-              className={`${baseBtnClasses} bg-slate-900/90 text-white hover:bg-slate-900`}
-            >
-              Learn about iOS TestFlight
-            </Link>
-          )}
-        </>
-      );
-    }
-
-    // iOS device
-    if (deviceType === "ios" && hasIos) {
-      return (
-        <>
-          <a
-            className={`${baseBtnClasses} bg-white text-slate-900 ring-1 ring-slate-200 hover:bg-slate-50`}
-            href={release.ios_testflight_url!}
-          >
-            Join iOS TestFlight
-          </a>
-          {hasAndroid && (
-            <Link
-              href="/beta"
-              className={`${baseBtnClasses} bg-slate-900/90 text-white hover:bg-slate-900`}
-            >
-              Download Android from beta page
-            </Link>
-          )}
-        </>
-      );
-    }
-
-    // Other / desktop
-    if (hasAndroid || hasIos) {
-      return (
-        <>
-          {hasIos && (
-            <a
-              className={`${baseBtnClasses} bg-white text-slate-900 ring-1 ring-slate-200 hover:bg-slate-50`}
-              href={release.ios_testflight_url!}
-            >
-              {siteConfig.hero.appStoreLabel || "iOS TestFlight"}
-            </a>
-          )}
-          {hasAndroid && (
-            <a
-              className={`${baseBtnClasses} bg-slate-900/90 text-white hover:bg-slate-900`}
-              href={release.android_build!}
-            >
-              {siteConfig.hero.playStoreLabel || "Android beta APK"}
-            </a>
-          )}
-        </>
-      );
-    }
-
-    // Fallback
-    return (
-      <Link
-        href="/beta"
-        className={`${baseBtnClasses} bg-white text-slate-900 ring-1 ring-slate-200 hover:bg-slate-50`}
-      >
-        Join the Gumboot beta
-      </Link>
-    );
   };
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-white to-slate-50 text-slate-900">
-      {/* HERO */}
+    <main className="min-h-screen bg-gradient-to-b from-white via-slate-50 to-white text-slate-900">
+      <MobileAppPopup
+        open={showMobilePopup}
+        release={release}
+        onClose={closeMobilePopup}
+      />
+
       <section
-        className="
-          relative overflow-hidden bg-no-repeat
-          bg-contain sm:bg-cover
-          bg-top sm:bg-center
-          min-h-[480px] sm:min-h-[560px] lg:min-h-[640px]
-        "
+        className="relative overflow-hidden bg-[#2B3439] bg-cover bg-center"
         style={{ backgroundImage: "url('/hero/hero.png')" }}
       >
-        {/* darker gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/45 via-black/35 to-black/15" />
+        <div className="absolute inset-0 bg-[linear-gradient(120deg,rgba(18,23,27,0.92),rgba(18,23,27,0.78)_48%,rgba(18,23,27,0.34))]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(38,166,154,0.28),_transparent_30%)]" />
 
-        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16 sm:py-24 lg:py-32 grid lg:grid-cols-2 gap-8 lg:gap-10 items-center">
+        <div className="relative mx-auto grid max-w-7xl gap-12 px-4 py-16 sm:px-6 sm:py-20 lg:grid-cols-[1.1fr_0.9fr] lg:px-8 lg:py-28">
           <motion.div
             initial="hidden"
             whileInView="show"
             viewport={{ once: true, amount: 0.35 }}
             variants={container}
-            className="max-w-2xl mx-auto lg:mx-0 text-center lg:text-left"
+            className="max-w-3xl"
           >
-            <motion.h1
-              variants={item}
-              className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold tracking-tight text-white leading-tight"
-            >
-              {siteConfig.hero.title}{" "}
-              <span className="text-gray-200">{siteConfig.hero.highlight}</span>
-            </motion.h1>
-
             <motion.p
               variants={item}
-              className="mt-4 sm:mt-6 text-base sm:text-lg lg:text-xl text-gray-100 leading-relaxed"
+              className="text-xs font-semibold uppercase tracking-[0.35em] text-white/60"
+            >
+              Local jobs. Less friction.
+            </motion.p>
+            <motion.h1
+              variants={item}
+              className="mt-4 text-4xl font-bold tracking-tight text-white sm:text-5xl lg:text-6xl"
+            >
+              {siteConfig.hero.title}{" "}
+              <span className="text-[#9BE3DB]">{siteConfig.hero.highlight}</span>
+            </motion.h1>
+            <motion.p
+              variants={item}
+              className="mt-6 max-w-2xl text-base leading-8 text-slate-100 sm:text-lg"
             >
               {siteConfig.hero.subtitle}
             </motion.p>
 
             <motion.div
               variants={item}
-              className="mt-6 sm:mt-8 flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center lg:justify-start"
-              id="download"
+              className="mt-8 flex flex-col gap-3 sm:flex-row"
             >
-              {renderDownloadButtons()}
+              <CtaButton href={siteConfig.postJobUrl}>Post a job</CtaButton>
+              <CtaButton href={siteConfig.signupUrl} variant="secondary">
+                Sign up
+              </CtaButton>
+            </motion.div>
+
+            <motion.div variants={item} className="mt-4">
+              <DownloadButtons release={release} tone="dark" />
             </motion.div>
 
             <motion.p
-              className="mt-3 sm:mt-4 text-xs sm:text-sm text-gray-200"
               variants={item}
+              className="mt-4 text-sm text-white/70"
             >
               {siteConfig.hero.tagline}
             </motion.p>
           </motion.div>
+
+          <motion.div
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, amount: 0.2 }}
+            variants={container}
+            className="grid gap-4"
+          >
+            {audienceCards.map((card) => (
+              <motion.article
+                key={card.title}
+                variants={item}
+                className="rounded-[2rem] border border-white/10 bg-white/10 p-6 text-white shadow-xl backdrop-blur-md"
+              >
+                <p className="text-xs font-semibold uppercase tracking-[0.28em] text-white/55">
+                  {card.eyebrow}
+                </p>
+                <h2 className="mt-3 text-2xl font-bold tracking-tight">
+                  {card.title}
+                </h2>
+                <p className="mt-3 text-sm leading-7 text-white/72 sm:text-base">
+                  {card.body}
+                </p>
+                <div className="mt-5 flex flex-wrap gap-2">
+                  {card.points.map((point) => (
+                    <span
+                      key={point}
+                      className="rounded-full border border-white/12 bg-white/6 px-3 py-1 text-xs font-medium text-white/80"
+                    >
+                      {point}
+                    </span>
+                  ))}
+                </div>
+                <a
+                  href={card.ctaHref}
+                  className="mt-6 inline-flex items-center text-sm font-semibold text-[#9BE3DB] hover:text-white"
+                >
+                  {card.ctaLabel} →
+                </a>
+              </motion.article>
+            ))}
+          </motion.div>
         </div>
       </section>
 
-      {/* FEATURE STRIP WITH IMAGE */}
       <FeatureStrip />
 
-      {/* SERVICES */}
       <Services />
 
-      {/* FEATURES GRID */}
-      <section
-        id="features"
-        className="py-16 sm:py-20 lg:py-24 bg-gradient-to-b from-white to-slate-50"
-      >
+      <section id="how-it-works" className="bg-white py-16 sm:py-20 lg:py-24">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="text-center lg:text-left max-w-3xl mx-auto lg:mx-0">
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight">
-              Everything you need to get it done
-            </h2>
-            <p className="mt-2 sm:mt-3 text-base sm:text-lg text-slate-600">
-              Simple tools for posters and taskers.
-            </p>
-          </div>
-          <div className="mt-8 sm:mt-12 grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-            {siteConfig.features.map((f, i) => (
-              <div
-                key={i}
-                className="rounded-xl sm:rounded-2xl bg-white p-5 sm:p-6 shadow-sm ring-1 ring-slate-200 hover:shadow-md transition-shadow"
+          <SectionIntro
+            eyebrow="How It Works"
+            title="Clear steps, fast decisions, fewer dead-end messages."
+            body="The point of the landing page is not just to look good. It should make the next click obvious. Gumboot already has the web flow to support that."
+          />
+
+          <div className="mt-10 grid gap-5 md:grid-cols-2 xl:grid-cols-4">
+            {howItWorks.map((step) => (
+              <article
+                key={step.step}
+                className="rounded-[1.75rem] border border-slate-200 bg-slate-50 p-6 shadow-sm"
               >
-                <h3 className="font-semibold text-base sm:text-lg text-slate-900">
-                  {f.title}
-                </h3>
-                <p className="mt-2 text-slate-600 text-sm sm:text-base leading-relaxed">
-                  {f.desc}
+                <p className="text-sm font-semibold tracking-[0.24em] text-[#26A69A]">
+                  {step.step}
                 </p>
-              </div>
+                <h3 className="mt-4 text-xl font-semibold text-slate-900">
+                  {step.title}
+                </h3>
+                <p className="mt-3 text-sm leading-7 text-slate-600 sm:text-base">
+                  {step.body}
+                </p>
+              </article>
             ))}
           </div>
         </div>
       </section>
 
-      {/* BLOG PREVIEW */}
       <section
-        id="blog"
-        className="py-12 sm:py-16 lg:py-20 bg-white border-y border-slate-200"
+        id="features"
+        className="bg-gradient-to-b from-slate-50 to-white py-16 sm:py-20 lg:py-24"
       >
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 sm:gap-6">
-            <div className="text-center sm:text-left">
-              <p className="text-xs uppercase tracking-[0.2em] text-slate-500 font-medium">
-                From the blog
-              </p>
-              <h2 className="mt-1 sm:mt-2 text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight">
-                Learn more about Gumboot
-              </h2>
-              <p className="mt-2 text-sm sm:text-base text-slate-600 max-w-xl mx-auto sm:mx-0">
-                Tips, updates and behind-the-scenes on how we're building Gumboot
-                for Kiwis.
-              </p>
+          <SectionIntro
+            eyebrow="Features"
+            title="Everything needed to turn interest into action."
+            body="These are the marketplace mechanics that make the homepage believable: speed, clarity, trust, and obvious next steps."
+          />
+
+          <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {siteConfig.features.map((feature) => (
+              <article
+                key={feature.title}
+                className="rounded-[1.75rem] border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
+              >
+                <h3 className="text-lg font-semibold text-slate-900">
+                  {feature.title}
+                </h3>
+                <p className="mt-3 text-sm leading-7 text-slate-600 sm:text-base">
+                  {feature.desc}
+                </p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-[#1F272B] py-16 text-white sm:py-20">
+        <div className="mx-auto grid max-w-7xl gap-8 px-4 sm:px-6 lg:grid-cols-[0.95fr_1.05fr] lg:px-8">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.32em] text-white/45">
+              Built For Trust
+            </p>
+            <h2 className="mt-3 text-3xl font-bold tracking-tight sm:text-4xl">
+              The landing page should keep selling confidence, not just features.
+            </h2>
+            <p className="mt-5 text-base leading-7 text-white/68 sm:text-lg">
+              Strong CTAs work best when they are backed by signals that the marketplace is safe, structured, and worth trying right now.
+            </p>
+          </div>
+          <div className="grid gap-4">
+            {trustPoints.map((point) => (
+              <div
+                key={point}
+                className="rounded-[1.5rem] border border-white/10 bg-white/5 p-5"
+              >
+                <p className="text-sm leading-7 text-white/78 sm:text-base">
+                  {point}
+                </p>
+              </div>
+            ))}
+            <div className="flex flex-wrap gap-3 pt-2">
+              <a
+                href={siteConfig.appUrl}
+                className="inline-flex items-center justify-center rounded-2xl bg-[#26A69A] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#1f9388]"
+              >
+                Open Gumboot
+              </a>
+              <a
+                href={siteConfig.signupUrl}
+                className="inline-flex items-center justify-center rounded-2xl border border-white/15 px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/10"
+              >
+                Sign up
+              </a>
             </div>
-            <div className="flex justify-center sm:justify-end">
+            <div className="pt-1">
+              <DownloadButtons release={release} tone="dark" />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section
+        id="blog"
+        className="border-y border-slate-200 bg-white py-12 sm:py-16 lg:py-20"
+      >
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+            <SectionIntro
+              eyebrow="From The Blog"
+              title="Learn more about how Gumboot works."
+              body="Keep the rest of the homepage conversion-focused, then let deeper content support trust and SEO."
+            />
+            <div>
               <Link
                 href="/blog"
-                className="inline-flex items-center text-sm sm:text-base font-medium text-slate-900 hover:underline transition-all"
+                className="inline-flex items-center text-sm font-semibold text-slate-900 hover:underline"
               >
                 View all posts →
               </Link>
             </div>
           </div>
 
-          {/* Loading / empty states */}
           {loadingPosts ? (
-            <div className="mt-8 sm:mt-10 grid gap-5 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
               {Array.from({ length: 3 }).map((_, i) => (
                 <div
                   key={i}
-                  className="rounded-xl sm:rounded-2xl border border-slate-200 bg-slate-50/80 p-5 animate-pulse"
+                  className="rounded-[1.75rem] border border-slate-200 bg-slate-50/80 p-5 animate-pulse"
                 >
-                  <div className="h-32 w-full bg-slate-200 rounded mb-4" />
-                  <div className="h-3 w-24 bg-slate-200 rounded mb-3" />
-                  <div className="h-4 w-3/4 bg-slate-200 rounded mb-2" />
-                  <div className="h-3 w-full bg-slate-200 rounded mb-1" />
-                  <div className="h-3 w-5/6 bg-slate-200 rounded" />
+                  <div className="h-32 w-full rounded-2xl bg-slate-200" />
+                  <div className="mt-4 h-3 w-24 rounded bg-slate-200" />
+                  <div className="mt-3 h-5 w-3/4 rounded bg-slate-200" />
+                  <div className="mt-3 h-3 w-full rounded bg-slate-200" />
+                  <div className="mt-2 h-3 w-5/6 rounded bg-slate-200" />
                 </div>
               ))}
             </div>
           ) : blogPosts.length === 0 ? (
-            <p className="mt-8 text-sm text-slate-500 text-center">
-              No blog posts yet. Check back soon.
-            </p>
+            <p className="mt-8 text-sm text-slate-500">No blog posts yet. Check back soon.</p>
           ) : (
-            <div className="mt-8 sm:mt-10 grid gap-5 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
               {blogPosts.slice(0, 3).map((post) => {
-                const date = new Date(post.published_at);
-                const formatted = date.toLocaleDateString("en-NZ", {
-                  year: "numeric",
-                  month: "short",
-                  day: "numeric",
-                });
+                const formatted = new Date(post.published_at).toLocaleDateString(
+                  "en-NZ",
+                  {
+                    year: "numeric",
+                    month: "short",
+                    day: "numeric",
+                  }
+                );
 
                 return (
                   <article
                     key={post.slug}
-                    className="group rounded-xl sm:rounded-2xl border border-slate-200 bg-slate-50/80 hover:bg-white shadow-sm hover:shadow-lg transition-all overflow-hidden flex flex-col"
+                    className="group overflow-hidden rounded-[1.75rem] border border-slate-200 bg-slate-50/70 shadow-sm transition hover:-translate-y-1 hover:bg-white hover:shadow-lg"
                   >
                     {post.image && (
-                      <div className="w-full bg-slate-100">
-                        {/* fixed aspect ratio + object-contain so full image is visible */}
-                        <div className="relative aspect-[16/9] w-full">
-                          <img
-                            src={post.image}
-                            alt={post.title}
-                            className="absolute inset-0 h-full w-full object-contain"
-                            loading="lazy"
-                          />
-                        </div>
+                      <div className="relative aspect-[16/9] w-full bg-slate-100">
+                        <img
+                          src={post.image}
+                          alt={post.title}
+                          className="absolute inset-0 h-full w-full object-contain"
+                          loading="lazy"
+                        />
                       </div>
                     )}
-
-                    <div className="flex-1 p-5">
-                      <p className="text-[11px] font-medium uppercase tracking-wide text-slate-500">
+                    <div className="p-5">
+                      <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-slate-500">
                         {formatted}
                       </p>
-                      <h3 className="mt-2 text-base sm:text-lg font-semibold text-slate-900 leading-snug">
-                        <Link
-                          href={`/blog/${post.slug}`}
-                          className="hover:underline"
-                        >
+                      <h3 className="mt-3 text-lg font-semibold leading-snug text-slate-900">
+                        <Link href={`/blog/${post.slug}`} className="hover:underline">
                           {post.title}
                         </Link>
                       </h3>
-                      <p className="mt-2 text-sm text-slate-600 line-clamp-3 leading-relaxed">
+                      <p className="mt-3 text-sm leading-7 text-slate-600">
                         {post.excerpt}
                       </p>
-                    </div>
-
-                    <div className="px-5 pb-5">
                       <Link
                         href={`/blog/${post.slug}`}
-                        className="inline-flex items-center text-xs sm:text-sm font-medium text-slate-900 hover:underline transition-all"
+                        className="mt-5 inline-flex items-center text-sm font-semibold text-slate-900 hover:underline"
                       >
                         Read more →
                       </Link>
@@ -545,59 +656,34 @@ export default function Page() {
         </div>
       </section>
 
-      {/* WAITLIST */}
-      <section className="py-12 sm:py-16 lg:py-20 bg-gradient-to-b from-slate-50 to-white">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight">
-            Ready to get it done?
+      <section className="bg-gradient-to-b from-slate-50 to-white py-16 sm:py-20">
+        <div className="mx-auto max-w-5xl px-4 text-center sm:px-6 lg:px-8">
+          <p className="text-xs font-semibold uppercase tracking-[0.32em] text-slate-500">
+            Ready To Try It
+          </p>
+          <h2 className="mt-4 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
+            Push people into the product, not into a holding pattern.
           </h2>
-          <p className="mt-2 sm:mt-3 text-base sm:text-lg text-slate-600 max-w-2xl mx-auto">
-            Join the waitlist and we'll ping you when Gumboot launches in your
-            area.
+          <p className="mx-auto mt-5 max-w-3xl text-base leading-7 text-slate-600 sm:text-lg">
+            The web app is live, so the homepage should keep inviting users to take the next real step: open Gumboot, post a job, create an account, or download the app.
           </p>
-          <form
-            onSubmit={handleWaitlistSubmit}
-            className="mt-6 sm:mt-8 mx-auto max-w-md grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-3"
-          >
-            <input
-              type="email"
-              required
-              placeholder="you@example.com"
-              value={waitlistEmail}
-              onChange={(e) => setWaitlistEmail(e.target.value)}
-              className="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm sm:text-base outline-none focus:ring-2 focus:ring-slate-400 focus:border-transparent transition-all"
-            />
-            <button
-              type="submit"
-              disabled={waitlistLoading}
-              className="rounded-xl px-5 py-3 sm:px-6 bg-slate-900 text-white font-medium hover:bg-slate-800 disabled:opacity-60 disabled:cursor-not-allowed transition-all shadow-lg text-sm sm:text-base"
-            >
-              {waitlistLoading ? "Adding..." : "Notify me"}
-            </button>
-          </form>
-
-          {waitlistMessage && (
-            <p className="mt-3 sm:mt-4 text-xs sm:text-sm text-emerald-600">
-              {waitlistMessage}
-            </p>
-          )}
-
-          {waitlistError && (
-            <p className="mt-3 sm:mt-4 text-xs sm:text-sm text-red-600">
-              {waitlistError}
-            </p>
-          )}
-
-          <p className="mt-3 sm:mt-4 text-xs sm:text-sm text-slate-500">
-            By subscribing, you agree to our{" "}
+          <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <a
-              className="underline hover:text-slate-700 transition-colors"
-              href="/privacy"
+              href={siteConfig.appUrl}
+              className="inline-flex items-center justify-center rounded-2xl bg-slate-900 px-6 py-3 text-sm font-semibold text-white transition hover:bg-slate-800"
             >
-              Privacy Policy
+              Open Gumboot
             </a>
-            .
-          </p>
+            <a
+              href={siteConfig.postJobUrl}
+              className="inline-flex items-center justify-center rounded-2xl border border-slate-300 px-6 py-3 text-sm font-semibold text-slate-900 transition hover:bg-slate-50"
+            >
+              Post a job
+            </a>
+          </div>
+          <div className="mt-4 flex justify-center">
+            <DownloadButtons release={release} />
+          </div>
         </div>
       </section>
     </main>

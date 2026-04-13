@@ -4,12 +4,12 @@ import Header from "./components/Header";
 import Footer from "./components/Footer";
 
 export const metadata: Metadata = {
-  title: "Gumboot — Get local jobs done",
+  title: "Gumboot — Book trusted local help",
   description:
-    "Gumboot connects people who need a hand with locals who can help — mowing, moving, cleaning, painting, delivery and more.",
+    "Post local jobs, compare offers, chat with verified helpers, and pay securely on Gumboot's live web app.",
   openGraph: {
     title: "Gumboot",
-    description: "Get local jobs done. Fast.",
+    description: "Book trusted local help today.",
     url: "https://gumboot.app",
     siteName: "Gumboot",
     images: ["/og.png"],

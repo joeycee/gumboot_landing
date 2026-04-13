@@ -25,28 +25,36 @@ export type BlogPost = {
 };
 
 export type SiteConfig = {
+  appUrl: string;
+  signupUrl: string;
+  postJobUrl: string;
+  loginUrl: string;
   hero: HeroConfig;
   features: FeatureConfig[];
   blogs: BlogPost[];
 };
 
 export const siteConfig: SiteConfig = {
+  appUrl: "https://web.gumboot.app",
+  signupUrl: "https://web.gumboot.app/auth/signup",
+  postJobUrl: "https://web.gumboot.app/jobs/post",
+  loginUrl: "https://web.gumboot.app/auth/login",
   hero: {
-    title: "Get local jobs done.",
-    highlight: "Fast.",
+    title: "Book trusted local help.",
+    highlight: "Today.",
     subtitle:
-      "Gumboot connects people who need a hand with locals who can help — mowing, moving, cleaning, painting, delivery and more.",
-    appStoreLabel: "App Store (soon)",
-    playStoreLabel: "Google Play (soon)",
-    tagline: "Free to download • Secure Stripe payments • NZ-first launch",
+      "Gumboot connects people who need a hand with locals who can help. Post jobs, compare offers, chat in one place, and pay securely through Gumboot with Stripe.",
+    appStoreLabel: "Post a job",
+    playStoreLabel: "Earn with Gumboot",
+    tagline: "Live on the web • Secure Stripe payments • Built for New Zealand",
   },
   features: [
-    { title: "Post in minutes", desc: "Describe the job, add photos, set your budget and location." },
-    { title: "Smart matching", desc: "Locals nearby get notified and send offers with timelines." },
-    { title: "Secure payments", desc: "Funds held in escrow via Stripe. Release when you’re happy." },
-    { title: "Real reviews", desc: "Build trust with verified IDs and two-way ratings." },
-    { title: "Messaging & photos", desc: "Chat, share images, and coordinate details in-app." },
-    { title: "Dispute support", desc: "Our team is here to help if something goes sideways." },
+    { title: "Post in minutes", desc: "Describe the job, add photos, set your budget, and publish without the back-and-forth." },
+    { title: "Fast local offers", desc: "Nearby taskers can spot the job quickly and send offers with timing and price." },
+    { title: "Secure payments", desc: "All payments are handled through Gumboot with Stripe, keeping checkout simple and professional for both sides." },
+    { title: "Verified profiles", desc: "ID verification is required, and profiles, ratings, and reviews make it easier to choose the right person with confidence." },
+    { title: "Messaging that stays organised", desc: "Keep job details, photos, offers, and updates in one workflow instead of scattered chats." },
+    { title: "Built for NZ jobs", desc: "From mowing and moving to cleaning and odd jobs, Gumboot is designed for local, everyday work." },
   ],
   blogs: [
     {

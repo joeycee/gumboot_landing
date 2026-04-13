@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { siteConfig } from "../config/siteConfig";
 
 export const metadata: Metadata = {
   title: "About Gumboot",
@@ -45,9 +46,9 @@ const wantToEarn = [
 ];
 
 const trustItems = [
-  "Verified user profiles",
+  "ID-verified user profiles",
   "Ratings and reviews",
-  "Secure payments",
+  "Stripe-handled payments through Gumboot",
   "In-app messaging and support",
 ];
 
@@ -80,12 +81,18 @@ export default function AboutPage() {
               At its core, Gumboot is about unlocking opportunity for both sides.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
-              <Link
-                href="/beta"
+              <a
+                href={siteConfig.appUrl}
                 className="rounded-xl bg-slate-900 px-5 py-3 text-sm font-medium text-white transition hover:bg-slate-800"
               >
-                Join Gumboot early
-              </Link>
+                Open Gumboot
+              </a>
+              <a
+                href={siteConfig.postJobUrl}
+                className="rounded-xl border border-slate-300 bg-white px-5 py-3 text-sm font-medium text-slate-900 transition hover:bg-slate-50"
+              >
+                Post a job
+              </a>
               <Link
                 href="/contact"
                 className="rounded-xl border border-slate-300 bg-white px-5 py-3 text-sm font-medium text-slate-900 transition hover:bg-slate-50"
@@ -243,11 +250,23 @@ export default function AboutPage() {
             Get involved early, shape the platform, and be part of building something local.
           </p>
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-            <Link
-              href="/beta"
+            <a
+              href={siteConfig.appUrl}
               className="rounded-xl bg-slate-900 px-5 py-3 text-sm font-medium text-white transition hover:bg-slate-800"
             >
-              Get the app
+              Open Gumboot
+            </a>
+            <a
+              href={siteConfig.signupUrl}
+              className="rounded-xl border border-slate-300 px-5 py-3 text-sm font-medium text-slate-900 transition hover:bg-slate-50"
+            >
+              Sign up
+            </a>
+            <Link
+              href="/beta"
+              className="rounded-xl border border-slate-300 px-5 py-3 text-sm font-medium text-slate-900 transition hover:bg-slate-50"
+            >
+              Download app
             </Link>
             <Link
               href="/contact"
