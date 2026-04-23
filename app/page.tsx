@@ -19,56 +19,58 @@ type BlogPost = {
 };
 
 const heroStats = [
-  { value: "2-sided", label: "Built for posters and taskers" },
-  { value: "1 flow", label: "Post, chat, hire, and pay" },
-  { value: "NZ-first", label: "Designed for local jobs" },
+  { value: "2-sided", label: "For posters and taskers" },
+  { value: "1 flow", label: "Post, chat, hire, pay" },
+  { value: "NZ-first", label: "For local jobs" },
 ];
 
 const trustPoints = [
-  "ID verification is required, and verified profiles with reviews help users choose with confidence.",
-  "A valid card is required to post a job, and all payments are handled through Gumboot with Stripe.",
-  "In-app messaging keeps job details, updates, and payment flow in one place instead of scattered chats.",
+  "Verified profiles and reviews help you choose with confidence.",
+  "A valid card is required to post, with payments handled through Stripe.",
+  "Messages, job details, and payments stay in one place.",
 ];
 
 const howItWorks = [
   {
     step: "01",
-    title: "Post the job",
-    body: "Tell people what you need, where it is, and how much you want to spend.",
+    title: "Post",
+    body: "Tell Gumboot what you need.",
   },
   {
     step: "02",
-    title: "Compare local offers",
-    body: "Nearby taskers can respond with pricing, timing, and profile details.",
+    title: "Choose",
+    body: "Pick the best local offer.",
   },
   {
     step: "03",
-    title: "Hire with confidence",
-    body: "Pick the right person, message directly, and line everything up quickly.",
+    title: "Chat",
+    body: "Confirm the details.",
   },
   {
     step: "04",
-    title: "Pay securely",
-    body: "Handle payment through Gumboot with Stripe once the work is done and you are happy.",
+    title: "Done",
+    body: "Pay securely after the work.",
   },
 ];
 
-const audienceCards = [
+const gumbooters = [
   {
-    eyebrow: "For people who need help",
-    title: "Post a job and get local help moving.",
-    body: "From lawns and cleaning to moving, painting, and deliveries, Gumboot gives you a faster way to hire nearby help. A valid card is required to post.",
-    ctaLabel: "Post a job",
-    ctaHref: siteConfig.postJobUrl,
-    points: ["Post in minutes", "Compare offers", "Pay securely"],
+    name: "Jason R.",
+    role: "Cleaner",
+    image: "/people/jason.png",
+    review: "Jason left the place absolutely spotless and went above and beyond expectations.",
   },
   {
-    eyebrow: "For people who want to earn",
-    title: "Turn spare time and practical skills into income.",
-    body: "Create a profile, complete ID verification, browse nearby jobs, send offers, and build trust through great work and reviews.",
-    ctaLabel: "Sign up",
-    ctaHref: siteConfig.signupUrl,
-    points: ["Flexible local work", "Verified profiles", "Simple job flow"],
+    name: "Chloe S.",
+    role: "Gardener",
+    image: "/people/chloe.png",
+    review: "Chloe is reliable, detail-focused, and always leaves the Garden looking amazing.",
+  },
+  {
+    name: "Sarah T.",
+    role: "Dog Walker",
+    image: "/people/sarah.png",
+    review: "Sarah is fantastic with dogs—friendly, punctual, and always ensures a safe, happy walk.",
   },
 ];
 
@@ -187,10 +189,10 @@ function FeatureStrip() {
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_rgba(38,166,154,0.26),_transparent_40%)]" />
           <div className="relative">
             <p className="text-xs font-semibold uppercase tracking-[0.32em] text-white/55">
-              Why it converts
+              Why Gumboot
             </p>
             <h3 className="mt-3 text-3xl font-bold tracking-tight sm:text-4xl">
-              Built to reduce the usual local-job friction.
+              Local jobs without the usual friction.
             </h3>
             <div className="mt-8 grid gap-4 sm:grid-cols-3">
               {heroStats.map((stat) => (
@@ -209,10 +211,10 @@ function FeatureStrip() {
         <div className="flex items-center">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.32em] text-slate-500">
-              Why Gumboot
+              Trust Built In
             </p>
             <h3 className="mt-3 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
-              A faster marketplace for everyday local jobs.
+              Hire faster. Work with confidence.
             </h3>
             <div className="mt-6 space-y-4">
               {trustPoints.map((point) => (
@@ -246,6 +248,54 @@ function FeatureStrip() {
   );
 }
 
+function GumbootersSection() {
+  return (
+    <section className="bg-white py-16 sm:py-20 lg:py-24">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+          <SectionIntro
+            eyebrow="Gumbooters"
+            title="Meet the local helpers people come back to."
+            body="Reliable locals for cleaning, gardening, dog walking, and more."
+          />
+          <p className="hidden max-w-xs text-sm leading-6 text-slate-500 sm:block">
+            Real skills. Clear reviews. Easier choices.
+          </p>
+        </div>
+
+        <div className="-mx-4 mt-10 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-4 sm:mx-0 sm:grid sm:grid-cols-3 sm:overflow-visible sm:px-0 sm:pb-0">
+          {gumbooters.map((person) => (
+            <article
+              key={person.name}
+              className="min-w-[82%] snap-center overflow-hidden rounded-[1.75rem] border border-slate-200 bg-slate-50 shadow-sm transition hover:-translate-y-1 hover:bg-white hover:shadow-lg sm:min-w-0"
+            >
+              <div className="relative aspect-[3/4] bg-slate-100">
+                <img
+                  src={person.image}
+                  alt={`${person.name}, ${person.role}`}
+                  className="absolute inset-0 h-full w-full object-contain"
+                  loading="lazy"
+                />
+              </div>
+              <div className="p-5 sm:p-6">
+                <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[#26A69A]">
+                  {person.role}
+                </p>
+                <h3 className="mt-3 text-2xl font-bold tracking-tight text-slate-900">
+                  {person.name}
+                </h3>
+                <p className="mt-4 text-sm leading-7 text-slate-600 sm:text-base">
+                  &ldquo;{person.review}&rdquo;
+                </p>
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function MobileAppPopup({
   open,
   release,
@@ -266,10 +316,10 @@ function MobileAppPopup({
               Mobile app
             </p>
             <h2 className="mt-3 text-2xl font-bold tracking-tight sm:text-3xl">
-              Take Gumboot on the road with the app.
+              Take Gumboot on the road.
             </h2>
             <p className="mt-3 text-sm leading-7 text-white/72 sm:text-base">
-              Open Gumboot on the web, or download the latest iPhone and Android builds for jobs on the go.
+              Open the web app or download the latest mobile build.
             </p>
           </div>
           <button
@@ -418,41 +468,41 @@ export default function Page() {
             whileInView="show"
             viewport={{ once: true, amount: 0.2 }}
             variants={container}
-            className="grid gap-4"
+            className="self-end rounded-[2rem] border border-white/10 bg-white/10 p-6 text-white shadow-xl backdrop-blur-md sm:p-7"
           >
-            {audienceCards.map((card) => (
-              <motion.article
-                key={card.title}
-                variants={item}
-                className="rounded-[2rem] border border-white/10 bg-white/10 p-6 text-white shadow-xl backdrop-blur-md"
+            <motion.p
+              variants={item}
+              className="text-xs font-semibold uppercase tracking-[0.28em] text-white/55"
+            >
+              Built For Both Sides
+            </motion.p>
+            <motion.div variants={item} className="mt-5 grid gap-3">
+              {["Post in minutes", "Compare offers", "Earn with local skills"].map(
+                (point) => (
+                  <div
+                    key={point}
+                    className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-4 py-3"
+                  >
+                    <span className="h-2 w-2 rounded-full bg-[#9BE3DB]" />
+                    <span className="text-sm font-medium text-white/86">{point}</span>
+                  </div>
+                )
+              )}
+            </motion.div>
+            <motion.div variants={item} className="mt-6 flex flex-col gap-3 sm:flex-row">
+              <a
+                href={siteConfig.postJobUrl}
+                className="inline-flex items-center justify-center rounded-2xl bg-white px-4 py-3 text-sm font-semibold text-slate-900 transition hover:bg-slate-100"
               >
-                <p className="text-xs font-semibold uppercase tracking-[0.28em] text-white/55">
-                  {card.eyebrow}
-                </p>
-                <h2 className="mt-3 text-2xl font-bold tracking-tight">
-                  {card.title}
-                </h2>
-                <p className="mt-3 text-sm leading-7 text-white/72 sm:text-base">
-                  {card.body}
-                </p>
-                <div className="mt-5 flex flex-wrap gap-2">
-                  {card.points.map((point) => (
-                    <span
-                      key={point}
-                      className="rounded-full border border-white/12 bg-white/6 px-3 py-1 text-xs font-medium text-white/80"
-                    >
-                      {point}
-                    </span>
-                  ))}
-                </div>
-                <a
-                  href={card.ctaHref}
-                  className="mt-6 inline-flex items-center text-sm font-semibold text-[#9BE3DB] hover:text-white"
-                >
-                  {card.ctaLabel} →
-                </a>
-              </motion.article>
-            ))}
+                Post a job
+              </a>
+              <a
+                href={siteConfig.signupUrl}
+                className="inline-flex items-center justify-center rounded-2xl border border-white/15 px-4 py-3 text-sm font-semibold text-white transition hover:bg-white/10"
+              >
+                Sign up
+              </a>
+            </motion.div>
           </motion.div>
         </div>
       </section>
@@ -461,59 +511,54 @@ export default function Page() {
 
       <Services />
 
-      <section id="how-it-works" className="bg-white py-16 sm:py-20 lg:py-24">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <SectionIntro
-            eyebrow="How It Works"
-            title="Clear steps, fast decisions, fewer dead-end messages."
-            body="The point of the landing page is not just to look good. It should make the next click obvious. Gumboot already has the web flow to support that."
-          />
+      <GumbootersSection />
 
-          <div className="mt-10 grid gap-5 md:grid-cols-2 xl:grid-cols-4">
+      <section
+        id="how-it-works"
+        className="bg-gradient-to-b from-white to-slate-50 py-16 sm:py-20 lg:py-24"
+      >
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+            <SectionIntro
+              eyebrow="How It Works"
+              title="Post. Choose. Done."
+              body="Local help without the runaround."
+            />
+            <a
+              href={siteConfig.postJobUrl}
+              className="inline-flex w-fit items-center justify-center rounded-2xl bg-slate-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-800"
+            >
+              Post a job
+            </a>
+          </div>
+
+          <div className="mt-10 grid gap-4 md:grid-cols-4">
             {howItWorks.map((step) => (
               <article
                 key={step.step}
-                className="rounded-[1.75rem] border border-slate-200 bg-slate-50 p-6 shadow-sm"
+                className="rounded-[1.5rem] border border-slate-200 bg-white p-5 shadow-sm"
               >
                 <p className="text-sm font-semibold tracking-[0.24em] text-[#26A69A]">
                   {step.step}
                 </p>
-                <h3 className="mt-4 text-xl font-semibold text-slate-900">
+                <h3 className="mt-4 text-2xl font-bold text-slate-900">
                   {step.title}
                 </h3>
-                <p className="mt-3 text-sm leading-7 text-slate-600 sm:text-base">
+                <p className="mt-2 text-sm leading-6 text-slate-600">
                   {step.body}
                 </p>
               </article>
             ))}
           </div>
-        </div>
-      </section>
 
-      <section
-        id="features"
-        className="bg-gradient-to-b from-slate-50 to-white py-16 sm:py-20 lg:py-24"
-      >
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <SectionIntro
-            eyebrow="Features"
-            title="Everything needed to turn interest into action."
-            body="These are the marketplace mechanics that make the homepage believable: speed, clarity, trust, and obvious next steps."
-          />
-
-          <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {siteConfig.features.map((feature) => (
-              <article
-                key={feature.title}
-                className="rounded-[1.75rem] border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
+          <div className="mt-6 flex flex-wrap gap-3">
+            {["Verified locals", "Secure payments", "Built for NZ jobs"].map((point) => (
+              <span
+                key={point}
+                className="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700"
               >
-                <h3 className="text-lg font-semibold text-slate-900">
-                  {feature.title}
-                </h3>
-                <p className="mt-3 text-sm leading-7 text-slate-600 sm:text-base">
-                  {feature.desc}
-                </p>
-              </article>
+                {point}
+              </span>
             ))}
           </div>
         </div>
@@ -526,10 +571,10 @@ export default function Page() {
               Built For Trust
             </p>
             <h2 className="mt-3 text-3xl font-bold tracking-tight sm:text-4xl">
-              The landing page should keep selling confidence, not just features.
+              Built for trust from the first message.
             </h2>
             <p className="mt-5 text-base leading-7 text-white/68 sm:text-lg">
-              Strong CTAs work best when they are backed by signals that the marketplace is safe, structured, and worth trying right now.
+              Profiles, reviews, messaging, and payment all work together.
             </p>
           </div>
           <div className="grid gap-4">
@@ -572,8 +617,8 @@ export default function Page() {
           <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <SectionIntro
               eyebrow="From The Blog"
-              title="Learn more about how Gumboot works."
-              body="Keep the rest of the homepage conversion-focused, then let deeper content support trust and SEO."
+              title="Guides and updates."
+              body="Short reads for better local jobs."
             />
             <div>
               <Link
@@ -662,10 +707,10 @@ export default function Page() {
             Ready To Try It
           </p>
           <h2 className="mt-4 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
-            Push people into the product, not into a holding pattern.
+            Ready to get started?
           </h2>
           <p className="mx-auto mt-5 max-w-3xl text-base leading-7 text-slate-600 sm:text-lg">
-            The web app is live, so the homepage should keep inviting users to take the next real step: open Gumboot, post a job, create an account, or download the app.
+            Open Gumboot, post a job, or create your account today.
           </p>
           <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <a

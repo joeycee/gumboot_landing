@@ -40,21 +40,21 @@ export const siteConfig: SiteConfig = {
   postJobUrl: "https://web.gumboot.app/jobs/post",
   loginUrl: "https://web.gumboot.app/auth/login",
   hero: {
-    title: "Book trusted local help.",
-    highlight: "Today.",
+    title: "Post a job. Accept an offer.",
+    highlight: "Job done.",
     subtitle:
-      "Gumboot connects people who need a hand with locals who can help. Post jobs, compare offers, chat in one place, and pay securely through Gumboot with Stripe.",
+      "Find local help, agree the details, and pay securely in one place.",
     appStoreLabel: "Post a job",
     playStoreLabel: "Earn with Gumboot",
     tagline: "Live on the web • Secure Stripe payments • Built for New Zealand",
   },
   features: [
-    { title: "Post in minutes", desc: "Describe the job, add photos, set your budget, and publish without the back-and-forth." },
-    { title: "Fast local offers", desc: "Nearby taskers can spot the job quickly and send offers with timing and price." },
-    { title: "Secure payments", desc: "All payments are handled through Gumboot with Stripe, keeping checkout simple and professional for both sides." },
-    { title: "Verified profiles", desc: "ID verification is required, and profiles, ratings, and reviews make it easier to choose the right person with confidence." },
-    { title: "Messaging that stays organised", desc: "Keep job details, photos, offers, and updates in one workflow instead of scattered chats." },
-    { title: "Built for NZ jobs", desc: "From mowing and moving to cleaning and odd jobs, Gumboot is designed for local, everyday work." },
+    { title: "Post in minutes", desc: "Describe the job, add photos, set a budget, and publish." },
+    { title: "Fast local offers", desc: "Compare nearby helpers by price, timing, and profile." },
+    { title: "Secure payments", desc: "Pay through Gumboot with Stripe once the job is done." },
+    { title: "Verified profiles", desc: "ID checks, ratings, and reviews help you choose well." },
+    { title: "Organised messaging", desc: "Keep job details, photos, and updates in one place." },
+    { title: "Built for NZ jobs", desc: "Made for lawns, cleaning, moving, odd jobs, and more." },
   ],
   blogs: [
     {
