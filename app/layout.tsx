@@ -32,6 +32,10 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "/",
   },
+  icons: {
+    icon: "/icon.png",
+    apple: "/logo/logo.png",
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
