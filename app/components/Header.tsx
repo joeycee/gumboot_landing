@@ -9,7 +9,7 @@ type NavItem = { label: string; href: string; type?: "anchor" | "route" };
 
 const NAV_ITEMS: NavItem[] = [
   { label: "About", href: "/about", type: "route" },
-  { label: "How it works", href: "#how-it-works", type: "anchor" },
+  { label: "How it works", href: "/onboarding", type: "route" },
   { label: "Features", href: "#features", type: "anchor" },
   { label: "Beta", href: "/beta", type: "route" },
   { label: "FAQ", href: "/faq", type: "route" },
