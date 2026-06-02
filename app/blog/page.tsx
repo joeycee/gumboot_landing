@@ -1,6 +1,30 @@
 // app/blog/page.tsx
+import type { Metadata } from "next";
 import Link from "next/link";
 import { getBlogPosts } from "@/lib/blog"; // <-- Django API fetcher
+
+export const metadata: Metadata = {
+  title: "Blog",
+  description:
+    "Read Gumboot updates, guides, and advice for posting local jobs and earning through flexible work in New Zealand.",
+  alternates: {
+    canonical: "/blog",
+  },
+  openGraph: {
+    title: "Gumboot Blog",
+    description:
+      "Read Gumboot updates, guides, and advice for posting local jobs and earning through flexible work in New Zealand.",
+    url: "https://gumboot.app/blog",
+    images: ["/og.png"],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Gumboot Blog",
+    description:
+      "Read Gumboot updates, guides, and advice for posters and workers on Gumboot.",
+    images: ["/og.png"],
+  },
+};
 
 export default async function BlogIndexPage() {
   const posts = await getBlogPosts(); // Fetch from DRF backend

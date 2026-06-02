@@ -1,5 +1,29 @@
+import type { Metadata } from "next";
 import { getLatestAppRelease } from "@/lib/appRelease";
 import { FaApple, FaAndroid } from "react-icons/fa";
+
+export const metadata: Metadata = {
+  title: "Beta App Releases",
+  description:
+    "Download the latest Gumboot Android beta or join the iOS TestFlight release.",
+  alternates: {
+    canonical: "/beta",
+  },
+  openGraph: {
+    title: "Gumboot Beta App Releases",
+    description:
+      "Get early access to the latest Gumboot Android and iOS beta releases.",
+    url: "https://gumboot.app/beta",
+    images: ["/og.png"],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Gumboot Beta App Releases",
+    description:
+      "Get early access to the latest Gumboot Android and iOS beta releases.",
+    images: ["/og.png"],
+  },
+};
 
 export default async function BetaPage() {
   const release = await getLatestAppRelease();

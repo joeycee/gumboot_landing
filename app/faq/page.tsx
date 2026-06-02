@@ -107,9 +107,67 @@ const CATS = [
 export default function FAQPage() {
   const [active, setActive] = useState<(typeof CATS)[number]["key"]>("general");
   const faqs = useMemo(() => ALL_QA.filter((x) => x.cat === active), [active]);
+  const faqStructuredData = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: [
+      {
+        "@type": "Question",
+        name: "How do I create an account?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "Tap Sign up and follow the steps to verify your email or phone and create your profile.",
+        },
+      },
+      {
+        "@type": "Question",
+        name: "Is my personal information secure?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "Yes. Gumboot takes privacy seriously. Data is encrypted in transit and at rest, and only necessary information is shared to operate bookings, payments, and support.",
+        },
+      },
+      {
+        "@type": "Question",
+        name: "How does payment work?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "Payments are handled through Gumboot with Stripe. Once a job is completed, payout is initiated to the provider's bank account and processing can take up to 4 business days.",
+        },
+      },
+      {
+        "@type": "Question",
+        name: "Do I need a card to post a job?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "Yes. A valid card is required to post a job on Gumboot.",
+        },
+      },
+      {
+        "@type": "Question",
+        name: "How do I apply for a job?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "Log in, browse the map, tap a job, review the details, then send your offer with a message and price.",
+        },
+      },
+      {
+        "@type": "Question",
+        name: "How are providers verified?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "ID verification is required, and Gumboot also relies on ongoing ratings and reviews to support trust and safety in the community.",
+        },
+      },
+    ],
+  };
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-white to-slate-50 text-slate-900">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqStructuredData) }}
+      />
       {/* Hero */}
       <section className="border-b border-slate-200 bg-gradient-to-b from-white to-slate-50">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">

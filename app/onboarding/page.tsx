@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import {
@@ -17,9 +18,43 @@ import {
 import { siteConfig } from "../config/siteConfig";
 
 export const metadata: Metadata = {
-  title: "How to Get Started with Gumboot",
+  title: "How to Get Started with Gumboot | Post Jobs, Apply for Work, and Pay Safely",
   description:
-    "Learn how to sign up, post jobs, apply for work, message safely, and complete payments on Gumboot.",
+    "Learn how to sign up for Gumboot, post local jobs, apply for work, message safely, complete jobs, and release payment through one clear platform flow.",
+  keywords: [
+    "Gumboot",
+    "how Gumboot works",
+    "post local jobs",
+    "apply for jobs",
+    "local work app New Zealand",
+    "job marketplace NZ",
+    "secure job payments",
+    "ID verification for workers",
+  ],
+  alternates: {
+    canonical: "/onboarding",
+  },
+  openGraph: {
+    title: "How to Get Started with Gumboot",
+    description:
+      "See exactly how Gumboot works for posters and workers, from signup through to job completion and payment release.",
+    url: "https://gumboot.app/onboarding",
+    siteName: "Gumboot",
+    images: ["/og.png"],
+    locale: "en_NZ",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "How to Get Started with Gumboot",
+    description:
+      "Learn how to sign up, post jobs, apply for work, and complete payments safely on Gumboot.",
+    images: ["/og.png"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 const signupSteps = [
@@ -232,8 +267,49 @@ function IconCard({
 }
 
 export default function OnboardingPage() {
+  const faqStructuredData = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faqs.map((item) => ({
+      "@type": "Question",
+      name: item.q,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: item.a,
+      },
+    })),
+  };
+
+  const breadcrumbStructuredData = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Home",
+        item: "https://gumboot.app/",
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "How it works",
+        item: "https://gumboot.app/onboarding",
+      },
+    ],
+  };
+
   return (
     <main className="min-h-screen bg-gradient-to-b from-white via-slate-50 to-white text-slate-900">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqStructuredData) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbStructuredData) }}
+      />
+
       <section className="relative overflow-hidden bg-[#2B3439]">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(38,166,154,0.24),_transparent_30%),linear-gradient(135deg,rgba(18,23,27,0.96),rgba(18,23,27,0.78)_55%,rgba(18,23,27,0.88))]" />
         <div className="relative mx-auto grid max-w-7xl gap-12 px-4 py-16 sm:px-6 sm:py-20 lg:grid-cols-[1.05fr_0.95fr] lg:px-8 lg:py-24">
@@ -273,10 +349,14 @@ export default function OnboardingPage() {
           <div className="flex items-center justify-center">
             <div className="relative w-full max-w-xl rounded-[2rem] border border-white/10 bg-white/10 p-5 shadow-2xl backdrop-blur md:p-6">
               <div className="grid gap-4 lg:grid-cols-[1.15fr_0.85fr]">
-                <div className="mx-auto flex w-full max-w-[750px] items-center justify-center lg:-ml-12 lg:max-w-[820px]">
-                  <img
+                <div className="mx-auto flex w-full max-w-[750px] items-center justify-center lg:-ml-2 lg:max-w-[820px]">
+                  <Image
                     src="/phone/gumboot_ph.png"
                     alt="Gumboot app shown on a phone"
+                    width={500}
+                    height={800}
+                    priority
+                    sizes="(min-width: 1024px) 640px, 320px"
                     className="h-auto w-full max-w-[320px] drop-shadow-[0_24px_42px_rgba(0,0,0,0.35)] lg:max-w-[640px]"
                   />
                 </div>
